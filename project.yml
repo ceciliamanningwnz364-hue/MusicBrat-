@@ -1,0 +1,48 @@
+name: AuraPlayer
+options:
+  bundleIdPrefix: com.auraplayer
+  deploymentTarget:
+    iOS: "16.1"
+  xcodeVersion: "15.4"
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+
+targets:
+  AuraPlayer:
+    type: application
+    platform: iOS
+    sources:
+      - path: .
+        excludes:
+          - "AuraPlayerWidget.swift"
+          - "project.yml"
+          - "README.md"
+          - ".github"
+    settings:
+      base:
+        INFOPLIST_FILE: Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.auraplayer.app
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - target: AuraPlayerWidget
+
+  AuraPlayerWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AuraPlayerWidget.swift
+      - path: LiveActivityAttributes.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.auraplayer.app.widget
+        INFOPLIST_KEY_NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        INFOPLIST_KEY_CFBundleDisplayName: "Aura Player"
+    info:
+      path: WidgetInfo.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
