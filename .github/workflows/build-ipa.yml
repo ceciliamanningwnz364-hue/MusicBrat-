@@ -1,0 +1,30 @@
+name: Build IPA
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Project
+        run: xcodegen generate
+      - name: Build
+        run: |
+          xcodebuild archive -project AuraPlayer.xcodeproj -scheme AuraPlayer -configuration Release -archivePath build/AuraPlayer.xcarchive -destination 'generic/platform=iOS' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/AuraPlayer.xcarchive/Products/Applications/AuraPlayer.app build/Payload/
+          cd build && zip -r AuraPlayer.ipa Payload
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: AuraPlayer-ipa
+          path: build/AuraPlayer.ipa
